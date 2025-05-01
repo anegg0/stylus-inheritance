@@ -4,7 +4,7 @@ use crate::erc20::params::Erc20Params;
 use alloy_primitives::{Address, U256};
 use alloy_sol_types::sol;
 use core::marker::PhantomData;
-use stylus_sdk::{msg, prelude::*};
+use stylus_sdk::prelude::*;
 
 sol_storage! {
     /// Erc20 implements all ERC-20 methods
@@ -118,7 +118,7 @@ impl<T: Erc20Params> Erc20<T> {
 
     /// Transfers `value` tokens to `to`
     pub fn transfer(&mut self, to: Address, value: U256) -> Result<bool, Erc20Error> {
-        self._transfer(msg::sender(), to, value)?;
+        self._transfer(self.vm().msg_sender(), to, value)?;
         Ok(true)
     }
 
@@ -129,14 +129,15 @@ impl<T: Erc20Params> Erc20<T> {
         to: Address,
         value: U256,
     ) -> Result<bool, Erc20Error> {
-        // Check msg::sender() allowance
+        // Check sender's allowance
+        let sender = self.vm().msg_sender();
         let mut sender_allowances = self.allowances.setter(from);
-        let mut allowance = sender_allowances.setter(msg::sender());
+        let mut allowance = sender_allowances.setter(sender);
         let old_allowance = allowance.get();
         if old_allowance < value {
             return Err(Erc20Error::InsufficientAllowance(InsufficientAllowance {
                 owner: from,
-                spender: msg::sender(),
+                spender: sender,
                 have: old_allowance,
                 want: value,
             }));
@@ -153,7 +154,8 @@ impl<T: Erc20Params> Erc20<T> {
     /// Approves `spender` to use `value` of caller's tokens
     pub fn approve(&mut self, spender: Address, value: U256) -> Result<bool, Vec<u8>> {
         // Sets the allowance
-        let mut sender_allowances = self.allowances.setter(msg::sender());
+        let sender = self.vm().msg_sender();
+        let mut sender_allowances = self.allowances.setter(sender);
         sender_allowances.setter(spender).set(value);
 
         // NOTE: Event emission removed (evm::log is deprecated)

@@ -3,7 +3,7 @@
 use crate::erc20::{Erc20, Erc20Params};
 use crate::erc20::base::{Erc20Error, InsufficientAllowance};
 use alloy_primitives::U256;
-use stylus_sdk::{msg, prelude::*};
+use stylus_sdk::prelude::*;
 
 /// Immutable definitions for StylusToken
 pub struct StylusTokenParams;
@@ -34,17 +34,18 @@ impl StylusToken {
     pub fn mint(&mut self, value: U256) -> Result<(), Erc20Error> {
         // Ensure contract is not paused
         if self.paused.get() {
+            let sender = self.vm().msg_sender();
             return Err(Erc20Error::InsufficientAllowance(
                 InsufficientAllowance {
-                    owner: msg::sender(),
-                    spender: msg::sender(),
+                    owner: sender,
+                    spender: sender,
                     have: U256::ZERO,
                     want: U256::ZERO,
                 },
             ));
         }
 
-        self.erc20.mint(msg::sender(), value)?;
+        self.erc20.mint(self.vm().msg_sender(), value)?;
         Ok(())
     }
 
@@ -68,10 +69,11 @@ impl StylusToken {
     ) -> Result<bool, Erc20Error> {
         // Ensure contract is not paused
         if self.paused.get() {
+            let sender = self.vm().msg_sender();
             return Err(Erc20Error::InsufficientAllowance(
                 InsufficientAllowance {
-                    owner: msg::sender(),
-                    spender: msg::sender(),
+                    owner: sender,
+                    spender: sender,
                     have: U256::ZERO,
                     want: U256::ZERO,
                 },
