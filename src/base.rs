@@ -21,7 +21,7 @@ impl BaseContract {
 }
 
 sol_storage! {
-    #[entrypoint]
+    #[cfg_attr(feature = "base-contract", entrypoint)]
     pub struct ChildContract {
         #[borrow]
         BaseContract base_contract;
@@ -41,6 +41,9 @@ impl ChildContract {
         Ok(())
     }
 }
+
+// Testing implementations would go here
+// See CLAUDE.md for details on how to properly implement testing
 
 #[cfg(feature = "export-abi")]
 pub fn export_abi() {
