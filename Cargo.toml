@@ -1,0 +1,20 @@
+[package]
+name = "stylus-inheritance-examples"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "Examples of inheritance patterns in Arbitrum Stylus"
+
+[dependencies]
+stylus-sdk = "0.8.4"
+alloy-primitives = "0.8.20"
+alloy-sol-types = "0.8.20"
+
+[dev-dependencies]
+hex = "0.4.3"
+
+[features]
+export-abi = ["stylus-sdk/export-abi"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
