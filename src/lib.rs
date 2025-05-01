@@ -2,7 +2,7 @@
 extern crate alloc;
 
 pub mod base;
-pub mod override;
+pub mod method_override;  // Renamed from override
 pub mod chained;
 pub mod utils;
 pub mod erc20;
@@ -11,7 +11,7 @@ pub mod erc20;
 fn main() {
     // Export ABIs for each contract
     base::export_abi();
-    override::export_abi();
+    method_override::export_abi();
     chained::export_abi();
     erc20::export_abi();
 }
