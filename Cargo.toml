@@ -6,7 +6,7 @@ authors = ["Your Name <your.email@example.com>"]
 description = "Examples of inheritance patterns in Arbitrum Stylus"
 
 [dependencies]
-stylus-sdk = "0.8.4"
+stylus-sdk = { version = "0.8.4", features = ["stylus-test"] }
 alloy-primitives = "0.8.20"
 alloy-sol-types = "0.8.20"
 
@@ -15,7 +15,6 @@ hex = "0.4.3"
 
 [features]
 export-abi = ["stylus-sdk/export-abi"]
-testing = ["stylus-sdk/stylus-test"]
 # Legacy testing flag - don't enable this (kept for reference only)
 legacy-testing = []
 # Contract features - only enable one at a time

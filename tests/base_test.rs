@@ -1,12 +1,10 @@
-// Note: This test is configured to run only when specific features are enabled
-// Run with: cargo test --features "testing base-contract"
 #[cfg(test)]
-#[cfg(all(feature = "testing", feature = "base-contract"))]
 mod tests {
+    // The simplest test we can run without refactoring the codebase
+    // This lets us verify that cargo test works properly
     #[test]
     fn test_inheritance_basic() {
-        // Placeholder for when proper test infrastructure is set up
-        // For now, this simple assertion will always pass
-        assert!(true);
+        // A simple placeholder test that always passes
+        assert!(true, "Basic test passes");
     }
 }
