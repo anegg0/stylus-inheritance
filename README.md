@@ -30,7 +30,7 @@ This repository showcases several approaches to implement inheritance-like patte
 
 ### Prerequisites
 
-- [Rust](https://www.rust-lang.org/tools/install) (1.70+)
+- [Rust](https://www.rust-lang.org/tools/install) (1.81+)
 - [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 
 ### Installation
@@ -175,7 +175,7 @@ The project uses feature flags to control which contract is the entrypoint:
 ### Building
 
 ```bash
-# Check compilation
+# Check compilation without enabling any specific contract
 cargo check
 
 # Build with the base contract as entrypoint
@@ -190,7 +190,54 @@ cargo build --features "export-abi base-contract"
 
 ### Testing
 
-Testing Stylus contracts requires specific setup with the Stylus test environment. See the CLAUDE.md file for detailed testing guidance.
+Testing Stylus contracts requires special setup with the Stylus test environment:
+
+```bash
+# Run all tests
+cargo test
+
+# Run a specific test
+cargo test test_inheritance_basic
+```
+
+#### Testing Framework
+
+The Stylus SDK provides a robust testing framework with the `stylus-test` feature that allows developers to:
+
+- Simulate a complete Ethereum environment without a test node
+- Test contract storage operations and state transitions
+- Mock transaction context and block information
+- Test contract interactions with mocked calls
+- Verify contract logic without deployment costs
+
+Example of a test using the TestVM:
+
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use stylus_sdk::testing::*;
+    use alloy_primitives::address;
+
+    #[test]
+    fn test_contract_behavior() {
+        // Create a test VM instance
+        let vm = TestVM::default();
+        
+        // Initialize the contract
+        let mut contract = MyContract::from(&vm);
+        
+        // Test contract behavior
+        assert_eq!(contract.get_value().unwrap(), U256::ZERO);
+        
+        // Modify contract state
+        contract.set_value(U256::from(10)).unwrap();
+        
+        // Verify state change
+        assert_eq!(contract.get_value().unwrap(), U256::from(10));
+    }
+}
+```
 
 ## Best Practices
 
@@ -287,6 +334,37 @@ sol_storage! {
 }
 ```
 
+## Important: Multiple Entrypoint Issue
+
+This repository contains multiple structs marked with `#[entrypoint]`, which can cause a symbol collision error:
+```
+error: symbol `mark_used` is already defined
+```
+
+When working with this code, select only one contract as the main entrypoint by:
+
+1. Using the appropriate feature flag to compile only one contract:
+   ```bash
+   cargo build --features base-contract
+   ```
+
+2. The codebase uses conditional compilation to ensure only one entrypoint is active:
+   ```rust
+   #[cfg_attr(feature = "base-contract", entrypoint)]
+   pub struct BaseContract { ... }
+   
+   #[cfg_attr(feature = "erc20-contract", entrypoint)]
+   pub struct TokenContract { ... }
+   ```
+
+## Testing Tips
+
+1. **Test Isolation** - Create a new `TestVM` instance for each test to avoid state leakage
+2. **Comprehensive Coverage** - Test both success and error cases
+3. **Clear Assertions** - Use descriptive error messages in assertions
+4. **Realistic Scenarios** - Test real-world usage patterns
+5. **Gas and Resource Efficiency** - For complex contracts, consider testing gas usage patterns
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -301,3 +379,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Stylus SDK Reference](https://docs.rs/stylus-sdk/latest/stylus_sdk/)
 - [Rust Smart Contract Examples](https://github.com/OffchainLabs/stylus-sdk-rs/tree/main/examples)
 - [Stylus Tutorial](https://docs.arbitrum.io/stylus/tutorials/hello-stylus)
+- [Stylus Testing Documentation](https://docs.arbitrum.io/stylus/how-tos/testing-contracts)
