@@ -42,9 +42,6 @@ impl ChildContract {
     }
 }
 
-// Testing implementations would go here
-// See CLAUDE.md for details on how to properly implement testing
-
 #[cfg(feature = "export-abi")]
 pub fn export_abi() {
     ChildContract::export_abi();
