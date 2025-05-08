@@ -60,8 +60,7 @@ impl<T: Erc20Params> Erc20<T> {
         let new_to_balance = to_balance.get() + value;
         to_balance.set(new_to_balance);
 
-        // NOTE: Event emission removed (evm::log is deprecated)
-        // Transfer event would be emitted here in a proper implementation
+        // Remove temporary event emission code until proper implementation is added
 
         Ok(())
     }
@@ -76,8 +75,7 @@ impl<T: Erc20Params> Erc20<T> {
         // Increasing the total supply
         self.total_supply.set(self.total_supply.get() + value);
 
-        // NOTE: Event emission removed (evm::log is deprecated)
-        // Transfer event would be emitted here in a proper implementation
+        // Remove temporary event emission code until proper implementation is added
 
         Ok(())
     }
@@ -158,8 +156,7 @@ impl<T: Erc20Params> Erc20<T> {
         let mut sender_allowances = self.allowances.setter(sender);
         sender_allowances.setter(spender).set(value);
 
-        // NOTE: Event emission removed (evm::log is deprecated)
-        // Approval event would be emitted here in a proper implementation
+        // Remove temporary event emission code until proper implementation is added
 
         Ok(true)
     }
